@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% block title %} Ticket {% endblock %}
+{% block content %}
+    <div class="container-fluid mt-5 mb-4 d-flex justify-content-center">
+        <div class="card text-center w-75">
+            <div class="card-body text-center">
+                <h1 class="fw-bold txt">SOLICITANTE</h1>
+                <div class="row mt-5">
+                    <div class="col-8 text-center">  
+                        <img class="text-uppercase img-fluid  ps-5" style="width: 60vh;" src="{{ url_for('static', filename='images/imagen1.png') }}" alt="">
+                    </div>
+                    <div class="col-4">
+                        <div class="table-responsive">
+                            <table class="table table-bordered txt">
+                            <thead>
+                                <tr>
+                                    <td class="fw-bold w-50 bg-warning" style="font-size: 14px;">ORDEN</td>
+                                    <td></td>
+                                </tr>
+                            </thead>
+                            </table>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered txt">
+                            <thead>
+                                <tr>
+                                    <td class="fw-bold w-50 bg-warning " style="font-size: 12px;">FECHA SOLICITUD</td>
+                                    <td></td>
+                                </tr>
+                            </thead>
+                            </table>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered txt">
+                            <thead>
+                                <tr>
+                                    <td class="fw-bold bg-warning " style="font-size: 14px;">FECHA ENTREGA</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                </tr>
+                            </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-5">
+                        <div class="table-responsive">
+                            <table class="table table-bordered txt">
+                            <thead>
+                                <tr>
+                                    <td class="fw-bold bg-warning " style="font-size: 14px;">NOMBRE DEL PROYECTO</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                </tr>
+                            </thead>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-2"></div>
+                    <div class="col-5">
+                        <div class="table-responsive">
+                            <table class="table table-bordered txt">
+                            <thead>
+                                <tr>
+                                    <td class="fw-bold bg-warning " style="font-size: 14px;">DATOS DEL SOLICITANTE</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                </tr>
+                            </thead>
+                            </table>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="container d-flex justify-content-center mb-5">
+                    <div class="table-responsive w-50">
+                        <table class="table table-bordered txt">
+                        <thead>
+                            <tr>
+                                <td class="fw-bold bg-warning " style="font-size: 14px;">DESCRIPCIÓN</td>
+                                <td class="fw-bold bg-warning " style="font-size: 14px;">TOTAL</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td class="text-start">$ </td>
+                            </tr>
+                        </thead>
+                        </table>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered txt">
+                    <thead>
+                        <tr>
+                            <td class="fw-bold bg-warning " style="font-size: 14px;">COMENTARIOS O INSTRUCCIONES ESPECIALES</td>
+                        </tr>
+                        <tr>
+                            <td>El servicio incluye la creación del gemelo digital, tanto los materiales como componentes necesarios para su contrucción y los costos asociados a los procesos de manufactura empleados.</td>
+                        </tr>
+                    </thead>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-10">
+                        <div class="table-responsive">
+                            <table class="table table-bordered txt">
+                            <thead style="font-size: 12px;">
+                                <tr>
+                                    <td colspan="2"  >Dudas o cometarios sobre este presupuesto ponerse en contacto con:</td>
+                                    <td class="fw-bold">David Santoyo</td>
+                                    <td rowspan="2" class="text-primary" style="vertical-align: middle;"><a href="mailto:DSantoyoG@iingen.unam.mx">DSantoyoG@iingen.unam.mx</a></td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">DATOS DE PAGO</td>
+                                    <td class="fw-bold" style="background-color: #70a4bf;">4110 SERVICIOS ADIMMA </td>
+                                    <td class="fw-bold bg-warning">207.323.010 Ingreso extraordinario</td>
+                                </tr>
+                            </thead>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <p class="text-danger text-start mt-3 pt-4" style="font-size: 14px;">FMT-2024.3</p>
+                    </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    <div class="text-center mb-5">
+        <button onclick="generatePDF()" class="btn btn-dark px-3 py-2">Descargar <i class="bi bi-download"></i></button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const element = document.querySelector('.card-body');
+            
+            html2canvas(element, {
+                scale: 2, // Aumenta la calidad
+                useCORS: true // Permite cargar imágenes externas
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+                
+                const imgProps = pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                
+                // Si el contenido es muy alto, agregar múltiples páginas
+                if (pdfHeight > pdf.internal.pageSize.getHeight()) {
+                    const ratio = pdf.internal.pageSize.getHeight() / pdfHeight;
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight * ratio);
+                } else {
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                }
+                
+                pdf.save('ticket.pdf');
+            }).catch(error => {
+                console.error('Error al generar PDF:', error);
+            });
+        }
+    </script>
+
+{% endblock %}

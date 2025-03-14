@@ -1,0 +1,154 @@
+{% extends 'base1.html' %}
+{% block title %}Administrador de Usuario{% endblock %}
+{% block content %}
+<div class="container my-5">
+  <h2 class="text-center mb-4 text-danger fw-bold">Administrador de Usuario</h2>
+  <div class=" card shadow-lg border-0 mx-auto p-4" style="max-width: 650px;">
+    <form action="/g_usuario" class="row g-3" method="POST" id="updateForm">
+      <!-- Campo oculto para el ID del usuario -->
+      <input type="hidden" id="idusuario" name="idusuario">
+
+      <!-- Primer par de cuadros de texto -->
+      <div class="col-md-6">
+        <label for="validationDefault01" class="form-label">Nombre</label>
+        <input type="text" class="form-control" id="nombre" name="nombre" required>
+      </div>
+      <div class="col-md-6">
+        <label for="validationDefault02" class="form-label">Apellido</label>
+        <input type="text" class="form-control" id="apellido" name="apellido" required>
+      </div>
+
+      <!-- Segundo par de cuadros de texto -->
+      <div class="col-md-6">
+        <label for="validationDefaultUsername" class="form-label">Usuario</label>
+        <div class="input-group">
+          <span class="input-group-text" id="inputGroupPrepend2">@</span>
+          <input type="text" class="form-control" id="usuario" name="usuario" required>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <label for="validationDefault03" class="form-label">Contraseña</label>
+        <div class="input-group">
+          <input type="password" class="form-control" id="contraseña" name="contraseña" minlength="8" required>
+          <span class="input-group-text">
+            <i class="bi bi-eye" id="togglePassword" style="cursor: pointer;"></i>
+          </span>
+        </div>
+      </div> 
+
+      <!-- Botones -->
+      <div class="text-center">
+        <button class="btn btn-success me-5" type="submit">
+          <i class="bi bi-plus-circle"></i> Agregar</button>
+        <button class="btn btn-primary" type="button" id="updateBtn">
+          <i class="bi bi-pencil-square"></i> Actualizar</button>
+      </div>
+    </form>
+    <div class="text-center" id="mensaje" style="display: none; color: green;">Contraseña actualizada</div>
+  </div>
+
+<div class="table-responsive mt-4" style="max-height: 232px;">
+  <table class="table table-hover table-bordered shadow-sm overflow-y-auto">
+    <thead class="table-primary" style="position: sticky; top: 0; z-index: 2;">
+      <tr class="text-center">
+        <th scope="col">Id</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Apellido</th>
+        <th scope="col">Usuario</th>
+        <th scope="col">Rol</th>
+        <th scope="col">Eliminar</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for usuario in usuarios %}
+      <tr class="usuario-row text-center" data-id="{{ usuario.idusuario }}" data-nombre="{{ usuario.nombre }}" data-apellido="{{ usuario.apellido }}" data-usuario="{{ usuario.usuario }}" data-rol="{{ usuario.rol }}">
+        <th scope="row">{{ usuario.idusuario }}</th>
+        <td>{{ usuario.nombre }}</td>
+        <td>{{ usuario.apellido }}</td>
+        <td>{{ usuario.usuario }}</td>
+        <td>{{ usuario.rol }}</td>
+        <td>
+          {% if usuario['rol'] == 'admin' %}
+            <form action="{{ url_for('eliminar_usuario', id=usuario.idusuario) }}" method="POST">
+              <button type="submit" class="btn btn-danger" disabled><i class="bi bi-trash3-fill"></i></button>
+            </form>
+          {% else %}
+            <form action="{{ url_for('eliminar_usuario', id=usuario.idusuario) }}" method="POST">
+              <button type="submit" class="btn btn-danger"> <i class="bi-trash3-fill"></i></button>
+            </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+</div>
+
+<script>
+  // Obtiene todas las filas de usuario de la tabla
+  const rows = document.querySelectorAll('.usuario-row');
+  let selectedRow = null; // Variable para almacenar la fila seleccionada
+
+  rows.forEach(row => {
+    row.addEventListener('click', () => {
+      // Elimina la clase 'selected' de todas las filas
+      rows.forEach(r => r.classList.remove('selected'));
+
+      // Añade la clase 'selected' a la fila clicada
+      row.classList.add('selected');
+
+      // Guarda la fila seleccionada para actualizar
+      selectedRow = row;
+
+      // Actualiza los cuadros de texto con los datos de la fila
+      document.getElementById('nombre').value = row.getAttribute('data-nombre');
+      document.getElementById('apellido').value = row.getAttribute('data-apellido');
+      document.getElementById('usuario').value = row.getAttribute('data-usuario');
+
+      // Se limpia el campo de contraseña
+      document.getElementById('contraseña').value = '';
+
+      // Establece el valor del campo oculto con el ID del usuario
+      document.getElementById('idusuario').value = row.getAttribute('data-id');
+    });
+  });
+
+  // Evento para el botón de actualizar
+  document.getElementById('updateBtn').addEventListener('click', () => {
+    // Verifica si se seleccionó un usuario
+    const idusuario = document.getElementById('idusuario').value;
+    if (idusuario) {
+      // Envía el formulario para actualizar
+      const form = document.getElementById('updateForm');
+      form.action = '/actualizar_usuario';
+      form.submit();
+
+      // Muestra el mensaje de confirmación
+      const mensaje = document.getElementById('mensaje');
+      mensaje.style.display = 'block';
+      setTimeout(() => {
+        mensaje.style.display = 'none';
+      }, 240000); // 4 minutos en milisegundos
+    } else {
+      alert('Por favor, selecciona un usuario para actualizar.');
+    }
+  });
+
+  // Evento para mostrar/ocultar contraseña
+  document.getElementById('togglePassword').addEventListener('click', () => {
+    const passwordField = document.getElementById('contraseña');
+    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordField.setAttribute('type', type);
+    this.classList.toggle('bi-eye');
+    this.classList.toggle('bi-eye-slash');
+  });
+</script>
+
+<style>
+  /* Estilo para la fila seleccionada */
+  .selected {
+    background-color: #d1e7dd; 
+  }
+</style>
+{% endblock %}

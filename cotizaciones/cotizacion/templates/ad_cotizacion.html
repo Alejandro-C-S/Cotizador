@@ -1,0 +1,60 @@
+{% extends 'base1.html' %}
+{% block title %}Cotizacion{% endblock %}
+{% block content %}
+<div class="container my-5">
+  <div class="text-center mb-5">
+      <h2 class="display-6 text-danger fw-bold">Administrador de cotizaciones</h2>
+  </div>
+
+  <form method="get" class="mb-4 d-flex justify-content-end">
+    <div class="input-group" style="max-width: 330px;">
+      <input type="text" name="busqueda" class="form-control" placeholder="Buscar por nombre o consecutivo" value="{{ request.args.get('busqueda') or '' }}">
+      <button type="submit" class="btn btn-secondary">
+        <i class="bi bi-search"></i>
+      </button>
+      {% if request.args.get('busqueda') %}
+      <a href="{{ url_for('ad_cotizacion') }}" class="btn btn-secondary">
+        <i class="bi bi-x-circle"></i>
+      </a>
+      {% endif %}
+    </div>
+</form>
+
+  <div class="table-responsive" style="height: 400px; overflow-y: auto;">
+      <table class="table table-bordered shadow-sm table-hover">
+          <thead class="thead-light table-primary" style="position: sticky; top: 0; background-color: white; z-index: 1;">
+              <tr>
+                  <th>Nombre del proyecto</th>
+                  <th>Consecutivo</th>
+                  <th>Fecha</th>
+                  <th>Hora</th>
+                  <th>Usuario</th>
+                  <th>Visualizar</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% if proyectos %}
+              {% for proyecto in proyectos %}
+              <tr>
+                  <td>{{ proyecto.nombre }}</td>
+                  <td>{{ proyecto.consecutivo }}</td>
+                  <td>{{ proyecto.fecha.strftime('%Y-%m-%d') }}</td>
+                  <td>{{ proyecto.fecha.strftime('%H:%M:%S') }}</td>
+                  <td>{{ usuarios_proyectos[proyecto.idproyecto] }}</td>
+                  <td>
+                      <a href="{{ url_for('ver_proyecto2', id=proyecto.idproyecto) }}" class="btn btn-primary">
+                          <i class="bi bi-eye"></i> Visualizar
+                      </a>
+                  </td>
+              </tr>
+              {% endfor %}
+              {% else %}
+                  <tr>
+                      <td colspan="6" class="text-center">No hay proyectos disponibles.</td>
+                  </tr>
+              {% endif %}
+          </tbody>
+      </table>
+  </div>
+</div>
+{% endblock %}

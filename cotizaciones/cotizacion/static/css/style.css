@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+.nav-link{
+    font-family:"Inter", serif;
+    color: #000;
+    font-weight: 800;
+}
+.nav-link:hover{
+    color: #B40000;
+}
+.active{
+    color: #B40000;
+}
+.txt{
+    font-family:"Inter", serif;
+}
+.style{
+    list-style-type: none;
+}
+.fondo{ 
+    background: #DDDADA;
+    font-size: 16px;
+    font-weight: 500;
+}
+@media (max-width: 600px) {
+    col{
+        flex: 100%;
+        max-width: 100%;
+    }
+  }
+  .input-group-text {
+    cursor: pointer;
+}

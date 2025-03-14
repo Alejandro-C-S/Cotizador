@@ -1,0 +1,67 @@
+{% extends 'base1.html' %}
+{% block title %}Fabricación{% endblock %}
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4 text-danger fw-bold">Gestor de Horas de Fabricación</h2>
+    <div class="card shadow-lg border-0 mx-auto p-4" style="max-width: 650px;">
+        <div class="card-body">
+            <form class="row g-3" method="post">
+                <input type="hidden" name="idFabricacion" id="idFabricacion" value="{{ editar.idfabricacion if editar else '' }}">         
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Tipo</label>
+                    <input type="text" name="taskPerfil" id="taskPerfil" class="form-control" value="{{ editar.tipo if editar else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Precio/Hora</label>
+                    <input type="text" name="taskPrecio" id="taskPrecio" class="form-control" value="{{ editar.precio if editar else '' }}" required>
+                </div>
+                <div class="text-center mt-4">
+                    <button class="btn btn-success me-3 px-4" type="submit" name="accion" value="agregar">
+                        <i class="bi bi-plus-circle"></i> Agregar
+                    </button>
+                    <button class="btn btn-primary px-4" type="submit" name="accion" value="actualizar">
+                        <i class="bi bi-pencil-square"></i> Actualizar
+                    </button>
+                </div>
+            </form>                
+        </div>
+    </div>
+
+    {% if mensaje_error %}
+    <div class="alert alert-danger text-center mt-4">
+        {{ mensaje_error }}
+    </div>
+    {% endif %}
+    {% if mensaje_exito %}
+    <div class="alert alert-success text-center mt-4">
+        {{ mensaje_exito }}
+    </div>
+    {% endif %}
+
+    <div class="table-responsive mt-4" style="max-height: 234px;">
+        <table class="table table-hover table-bordered shadow-sm overflow-y-auto">
+            <thead class="table-primary" style="position: sticky; top: 0; z-index: 2;">
+                <tr class="text-center">
+                    <th>Tipo</th>
+                    <th>Precio/Hora</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody id="tablaFabricacion">
+                {% for fabricacion in fabricacion %}
+                <tr class="text-center align-middle" id="fila_{{ fabricacion.idfabricacion }}" 
+                    onclick="seleccionarFila2('{{ fabricacion.idfabricacion }}', '{{ fabricacion.tipo }}', '{{ fabricacion.precio }}')">
+                    <td>{{ fabricacion.tipo }}</td>
+                    <td>${{ fabricacion.precio }}</td>
+                    <td>
+                        <a href="/eliminar_fabricacion/{{ fabricacion.idfabricacion }}" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>                        
+                </tr>
+                {% endfor %}
+            </tbody>                
+        </table>
+    </div>
+</div>
+{% endblock %}

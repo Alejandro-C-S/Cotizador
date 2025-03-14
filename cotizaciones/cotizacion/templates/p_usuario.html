@@ -1,0 +1,163 @@
+{% if usuario.rol == 'admin' %}
+    {% extends 'base1.html' %}
+{% else %}
+    {% extends 'base.html' %}
+{% endif %}
+
+{% block title %}Perfil de Usuario{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <h2 class="text-center mb-4 text-danger fw-bold">Perfil de Usuario</h2>
+    <div class=" card shadow-lg border-0 mx-auto p-4" style="max-width: 650px;">
+        <div class="card-body">
+            <form id="imageForm" class="row g-3 text-center mb-4" method="POST" enctype="multipart/form-data" action="{{ url_for('p_usuario') }}">
+                <input type="hidden" name="form_type" value="image">
+                <div class="col-12 d-flex justify-content-center flex-column align-items-center">
+                    <label for="fileInput" class="profile-circle"
+                        style="width: 200px; height: 200px; border-radius: 50%; background-color: rgb(226, 226, 226);
+                                display: flex; justify-content: center; align-items: center; cursor: pointer; overflow: hidden;">
+                        <img id="profilePreview" 
+                             src="{{ img_url }}" 
+                             alt="Foto de perfil" style="width: 100%; height: 100%; object-fit: cover;"
+                             onerror="this.onerror=null; this.src='/static/images/perfil.png';">
+                    </label>
+                    <input type="file" id="fileInput" name="profileImage" accept="image/*" style="display: none;" onchange="submitImage(event)">
+                    <!-- Mensajes de éxito y error solo para la imagen -->
+                    {% with messages = get_flashed_messages(with_categories=true, category_filter=['image_success', 'image_danger']) %}
+                        {% if messages %}
+                            <div id="flash-message-image" class="mt-2 text-center">
+                                {% for category, message in messages %}
+                                    <span class="{% if category == 'image_success' %}text-success{% elif category == 'image_danger' %}text-danger{% endif %}">{{ message }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            </form>
+
+            <!-- Formulario para datos personales -->
+            <form class="row g-3 text-center" method="POST" enctype="multipart/form-data" action="{{ url_for('p_usuario') }}">
+                <input type="hidden" name="form_type" value="data">
+                <div class="row justify-content-center g-3">
+                    <!-- Campos de Información del Usuario -->
+                    <div class="col-12 col-md-6">
+                        <label class="form-label w-100">Nombre</label>
+                        <input type="text" name="taskNombre" class="form-control" value="{{ usuario.nombre }}" required>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label w-100">Apellido</label>
+                        <input type="text" name="taskApellido" class="form-control" value="{{ usuario.apellido }}" required>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label w-100">Usuario</label>
+                        <input type="text" name="taskUsuario" id="taskUsuario" class="form-control" value="{{ usuario.usuario }}" required>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label w-100">Contraseña Actual</label>
+                        <input type="password" name="taskContrasenaActual" class="form-control" required>
+                    </div>
+                    <div class="col-12 col-md-6 mx-auto">
+                        <label class="form-label w-100">Nueva Contraseña</label>
+                        <div class="input-group">
+                            <input type="password" name="taskContrasena" id="taskContrasena" class="form-control" minlength="8">
+                            <span class="input-group-text" id="togglePassword">
+                                <i class="bi bi-eye"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center mt-3">
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <button class="btn btn-dark w-100" type="submit">Guardar Cambios</button>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                        <!-- Mensajes de éxito y error para datos personales -->
+                        {% with messages = get_flashed_messages(with_categories=true, category_filter=['success', 'danger']) %}
+                            {% if messages %}
+                                <div id="flash-message-data" class="mt-2 text-center">
+                                    {% for category, message in messages %}
+                                        <span class="{% if category == 'success' %}text-success{% elif category == 'danger' %}text-danger{% endif %}">{{ message }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla con datos del usuario logueado -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
+                <table class="table table-bordered table-striped table-hover shadow-sm">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Usuario</th>
+                            <th>Contraseña</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ usuario.nombre }}</td>
+                            <td>{{ usuario.apellido }}</td>
+                            <td>{{ usuario.usuario }}</td>
+                            <td>••••••</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function submitImage(event) {
+        const input = event.target;
+        const preview = document.getElementById('profilePreview');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+            // Enviar el formulario automáticamente
+            document.getElementById('imageForm').submit();
+        }
+    }
+
+    document.getElementById('togglePassword').addEventListener('mousedown', function () {
+        const passwordField = document.getElementById('taskContrasena');
+        passwordField.type = 'text';
+    });
+
+    document.getElementById('togglePassword').addEventListener('mouseup', function () {
+        const passwordField = document.getElementById('taskContrasena');
+        passwordField.type = 'password';
+    });
+
+    document.getElementById('togglePassword').addEventListener('mouseout', function () {
+        const passwordField = document.getElementById('taskContrasena');
+        passwordField.type = 'password';
+    });
+
+    // Desaparecer los mensajes después de 5 segundos
+    setTimeout(() => {
+        let flashMessageImage = document.getElementById('flash-message-image');
+        if (flashMessageImage) {
+            flashMessageImage.style.display = 'none';
+        }
+        let flashMessageData = document.getElementById('flash-message-data');
+        if (flashMessageData) {
+            flashMessageData.style.display = 'none';
+        }
+    }, 5000);
+</script>
+
+{% endblock %}

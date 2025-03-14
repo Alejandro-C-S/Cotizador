@@ -1,0 +1,183 @@
+{% extends 'base1.html' %}
+{% block title %}Cotizacion{% endblock %}
+{% block content %}
+<style>
+  .table-responsive {
+    overflow: hidden;
+  }
+  .table thead, .table tfoot {
+    position: sticky;
+    z-index: 1;
+  }
+  .table thead {
+    top: 0;
+  }
+  .table tfoot {
+    bottom: 0;
+  }
+  .table tbody {
+    display: block;
+    height: 400px; /* Ajusta la altura según tus necesidades */
+    overflow-y: auto;
+  }
+  .table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+  }
+  .table thead, .table tfoot, .table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+  }
+  .table tfoot td {
+    border: none; /* Quita los bordes del tfoot */
+    border-top: 4px solid black;
+  }
+  .rotate {
+    writing-mode: vertical-rl;
+    -webkit-writing-mode: vertical-rl; /* Prefijo para Safari */
+    transform: rotate(220deg);
+    white-space: nowrap;
+  }
+  th, td {
+    padding: 10px;
+    vertical-align: middle;
+  }
+</style>
+<div class="container-fluid my-5">
+  <div class="text-center mb-5">
+      <h1 class="txt fw-bold">Proyecto: {{ proyecto.nombre }}</h1>
+  </div>
+
+  <!-- Mostrar los detalles del proyecto -->
+  <div class="card mb-4">
+      <div class="card-body">
+          <h5 class="card-title">Información del Proyecto</h5>
+          <p><strong>Nombre:</strong> {{ proyecto.nombre }}</p>
+          <p><strong>Consecutivo:</strong> {{ proyecto.consecutivo }}</p>
+          <p><strong>Fecha de Creación:</strong> {{ proyecto.fecha.strftime('%d/%m/%y') }}</p>
+          <p><strong>Hora de Creación:</strong> {{ proyecto.fecha.strftime('%H:%M') }}</p>
+      </div>
+  </div>
+
+  <div class="text-center mb-4">
+      <h3 class="txt fw-bold">Cotización</h3>
+  </div>
+
+  <!-- Tabla con las cotizaciones asociadas al proyecto -->
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="fondo text-center text-wrap text-break">
+        <tr>
+          <th class="rotate">Tipo Perfil</th>
+          <th class="rotate">Material</th>
+          <th colspan="7" class="text-center">Medidas</th>
+          <th class="rotate">Longitud (cm)</th>
+          <th class="rotate">Precio mp</th>
+          <th class="rotate">% Fabricación</th>
+          <th class="rotate">Costo FAB</th>
+          <th class="rotate">V_Inicial</th>
+          <th class="rotate">V_Final</th>
+          <th class="rotate">Cantidad</th>
+        </tr>
+        <tr>
+          <th class="rotate"></th>
+          <th class="rotate"></th>
+          <th class="rotate">Diámetro</th>
+          <th class="rotate">Longitud</th>
+          <th class="rotate">Ancho</th>
+          <th class="rotate">Alto</th>
+          <th class="rotate">Espesor</th>
+          <th class="rotate">Vmm^3</th>
+          <th class="rotate">Kg</th>
+          <th class="rotate"></th>
+          <th class="rotate"></th>
+          <th class="rotate"></th>
+          <th class="rotate"></th>
+          <th class="rotate"></th>
+          <th class="rotate"></th>
+          <th class="rotate"></th>
+        </tr>
+      </thead>
+      <tbody class="text-center">
+        {% for cotizacion in cotizaciones %}
+        <tr>
+          <td class="text-break">{{ cotizacion.tipo_perfil }}</td>
+          <td class="text-break">{{ cotizacion.Material }}</td>
+          <td>{{ '{:.2f}'.format(cotizacion.diametro) if cotizacion.diametro is not none else '' }}</td>
+          <td>{{ '{:.2f}'.format(cotizacion.longitud) if cotizacion.longitud is not none else '' }}</td>
+          <td>{{ '{:.2f}'.format(cotizacion.ancho) if cotizacion.ancho is not none else '' }}</td>
+          <td>{{ '{:.2f}'.format(cotizacion.alto) if cotizacion.alto is not none else '' }}</td>
+          <td>{{ '{:.2f}'.format(cotizacion.espesor) if cotizacion.espesor is not none else '' }}</td>
+          <td>{{ '{:.2f}'.format(cotizacion.vmm3) if cotizacion.vmm3 is not none else '' }}</td>
+          <td>{{ '{:.2f}'.format(cotizacion.kg) if cotizacion.kg is not none else '' }}</td>
+          <td>{{ '{:.2f}'.format(cotizacion.long) if cotizacion.long is not none else '' }}</td>
+          <td>{{ '${:.2f}'.format(cotizacion.precio_mp) if cotizacion.precio_mp is not none else '' }}</td>
+          <td>{{ '{:.2f}%'.format(cotizacion.fabricacion) if cotizacion.fabricacion is not none else '' }}</td>
+          <td>{{ '${:.2f}'.format(cotizacion.cost_FAB) if cotizacion.cost_FAB is not none else '' }}</td>
+          <td>{{ '{:.2f}'.format(cotizacion.v_inicial) if cotizacion.v_inicial is not none else '' }}</td>
+          <td>{{ '{:.2f}'.format(cotizacion.v_final) if cotizacion.v_final is not none else '' }}</td>
+          <td>{{ '{:.2f}'.format(cotizacion.cantidad) if cotizacion.cantidad is not none else '' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot class="text-center">
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td id="total_precio_mp"></td>
+          <td class="fw-bold">MP FAB</td>
+          <td id="costo"></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  
+</div>
+<script>
+    // Obtener todas las celdas de la columna "precio_mp"
+    const precioMpCells = document.querySelectorAll('tbody td:nth-child(11)');
+    
+    // Calcular el total de "precio_mp"
+    let totalPrecioMp = 0;
+    precioMpCells.forEach(cell => {
+      const value = parseFloat(cell.textContent.replace('$', ''));
+      if (!isNaN(value)) {
+        totalPrecioMp += value;
+      }
+    });
+  
+    // Mostrar el total en el <tfoot>
+    document.getElementById('total_precio_mp').textContent = `$${totalPrecioMp.toFixed(2)}`;
+  </script>
+
+
+  <script>
+    // Obtener todas las celdas de la columna "precio_mp"
+    const costoCells = document.querySelectorAll('tbody td:nth-child(13)');
+    
+    // Calcular el total de "precio_mp"
+    let costo = 0;
+    costoCells.forEach(cell => {
+      const value = parseFloat(cell.textContent.replace('$', ''));
+      if (!isNaN(value)) {
+        costo += value;
+      }
+    });
+  
+    // Mostrar el total en el <tfoot>
+    document.getElementById('costo').textContent = `$${costo.toFixed(2)}`;
+  </script>
+{% endblock %}

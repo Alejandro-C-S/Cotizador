@@ -1,0 +1,429 @@
+{% extends 'base.html' %}
+{% block title %}Nueva cotización{% endblock %}
+{% block content %}
+<style>
+    @media (min-width: 600px){
+        .table-responsive {
+            overflow: hidden;
+        }
+        .table thead{
+            position: sticky;
+            z-index: 1;
+        }
+        .table thead {
+            top: 0;
+        }
+        .table tbody {
+            display: block;
+            height: 300px;
+            overflow-y: auto;
+        }
+        .table tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        .table thead, .table tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+    }
+</style>
+<div class="container-fluid"> 
+    {% if proyecto %}
+        <div class="row mx-5">
+            <div class="col-md-6 ">
+                <h3 class="txt fw-semibold text-center mt-5 ms-5 ps-5">Nombre del proyecto: 
+                    <span class="text-secondary fst-italic">{{proyecto.nombre}}</span> 
+                </h3>
+                <h5 class="txt fw-semibold mt-5 ms-5 text-center ps-5">Consecutivo:
+                    <span class="text-secondary fst-italic">{{proyecto.consecutivo}}</span>
+                </h5>
+            </div>
+            <div class="col-md-6">
+                {% if fecha %}
+                <h6 class="txt fw-semibold mt-5 me-5 text-end pe-5">Fecha:
+                    <span class="text-secondary fst-italic">{{fecha}}</span>
+                </h6>
+                <h6 class="txt fw-semibold mt-5 me-5 text-end pe-5">Hora:
+                    <span class="text-secondary fst-italic">{{hora}}</span>
+                </h6>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+    <div class="container text-center d-flex justify-content-center mt-5"> 
+        <div class="card w-75 mb-5 border border-0"> 
+            <div class="card-body"> 
+                <form class="row col g-4" method="post">
+                    <div class="col-sm-12 col-md-6">
+                        <label for="tipoPerfil" class="form-label txt fw-bold">Tipo de perfil</label>
+                        <select class="form-select" id="tipoPerfil" name="perfil" required>
+                            <option selected disabled value="">Seleccione una opción</option>
+                            {% for producto in productos %}
+                                <option value="{{ producto.idproducto }}" data-tipo="{{ producto.tipo_perfil }}">
+                                    {{ producto.tipo_perfil }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="col-sm-12 col-md-6">
+                        <label for="material" class="form-label txt fw-bold">Material</label>
+                        <select class="form-select" id="material" name="material" required disabled>
+                            <option selected disabled value="">Seleccione una opción</option>
+                        </select> 
+                    </div>
+                       
+                    <div class="col-sm-12 col-md-6">
+                        <label for="diametro" class="form-label txt fw-bold">Diametro (IN)</label>
+                        <input type="text" class="form-control" id="diametro" name="diametro" placeholder="2" required disabled oninput="this.value = this.value.replace(/[^0-9.]/g, '');">
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <label for="longitud" class="form-label txt fw-bold">Longitud (IN)</label>
+                        <input type="text" class="form-control" id="longitud" name="longitud" placeholder="2.22" required disabled oninput="this.value = this.value.replace(/[^0-9.]/g, '');">
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <label for="ancho" class="form-label txt fw-bold">Ancho (IN)</label>
+                        <input type="text" class="form-control" id="ancho" name="ancho" placeholder="2.22" required disabled oninput="this.value = this.value.replace(/[^0-9.]/g, '');">
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <label for="alto" class="form-label txt fw-bold">Alto (IN)</label>
+                        <input type="text" class="form-control" name="alto" id="alto" placeholder="3.22" required disabled oninput="this.value = this.value.replace(/[^0-9.]/g, '');">
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <label for="espesor" class="form-label txt fw-bold">Espesor (IN)</label>
+                        <input type="text" class="form-control" name="espesor" id="espesor" placeholder="5.22" required disabled oninput="this.value = this.value.replace(/[^0-9.]/g, '');">
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <label for="vfinal" class="form-label txt fw-bold">Volumen final</label>
+                        <input type="text" class="form-control" name="vfinal" id="vfinal" placeholder="2.28" required disabled oninput="this.value = this.value.replace(/[^0-9.]/g, '');">
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <label for="ncortes" class="form-label txt fw-bold">Número de cortes</label>
+                        <input type="text" class="form-control" name="ncortes" id="ncortes" placeholder="1" required disabled oninput="this.value = this.value.replace(/[^0-9.]/g, '');">
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <label for="vmm" class="form-label txt fw-bold">Vmm^3 que te da el software</label>
+                        <input type="text" class="form-control" name="vmm" id="vmm" placeholder="1" required disabled oninput="this.value = this.value.replace(/[^0-9.]/g, '');">
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <label for="kg" class="form-label txt fw-bold">Kg que te da el software</label>
+                        <input type="text" class="form-control" id="kg" name="kg" placeholder="3.5" required disabled oninput="this.value = this.value.replace(/[^0-9.]/g, '');">
+                    </div>
+                    <div class="col-12 mt-4">
+                        <div class="border border-2 p-4 rounded shadow-sm bg-light">
+                            <div class="row justify-content-center g-3">
+                                <div class="col-auto">
+                                    <div class="form-check">
+                                        <input class="form-check-input exclusive-checkbox" type="checkbox" value="Diseño" id="flexCheckDefault1" name="opciones[]">
+                                        <label class="form-check-label fw-bold" for="flexCheckDefault1">Diseño</label>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="form-check">
+                                        <input class="form-check-input exclusive-checkbox" type="checkbox" value="CnC" id="flexCheckDefault2" name="opciones[]">
+                                        <label class="form-check-label fw-bold" for="flexCheckDefault2">CnC</label>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="form-check">
+                                        <input class="form-check-input exclusive-checkbox" type="checkbox" value="Laser" id="flexCheckDefault3" name="opciones[]">
+                                        <label class="form-check-label fw-bold" for="flexCheckDefault3">Laser</label>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="MRO" id="flexCheckMRO" name="opciones[]">
+                                        <label class="form-check-label fw-bold" for="flexCheckMRO">MRO</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-center mt-3">
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" id="campoMRO" name="horas_mro" placeholder="Horas" disabled 
+                                        oninput="this.value = this.value.replace(/[^0-9:]/g, '').replace(/(\..*)\./g, '$1');">
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-center mt-3">
+                                <div class="col-md-4">
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary w-100 dropdown-toggle" type="button" id="dropdownCOM" 
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            Seleccione la COM
+                                        </button>
+                                        <ul class="dropdown-menu w-100" aria-labelledby="dropdownCOM">
+                                            {% for tipo in tipos_componentes %}
+                                                {% if tipo.tipo_componente and tipo.tipo_componente|length > 0 %} <!-- Filtra nulos y vacíos -->
+                                                    <li><a class="dropdown-item" href="#" data-value="{{ tipo.tipo_componente }}">{{ tipo.tipo_componente }}</a></li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                        <input type="hidden" id="comSelected" name="com" value="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4 g-3">
+
+                                <div class="col-md-4">
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary w-100 dropdown-toggle" type="button" id="dropdownCOM" 
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            Tipo cabeza
+                                        </button>
+                                        <ul class="dropdown-menu w-100" aria-labelledby="dropdownCOM">
+                                            {% for tipo in tipos_cabezas %}
+                                                {% if tipo.tipo_cabeza and tipo.tipo_cabeza|length > 0 %} <!-- Filtra nulos y vacíos -->
+                                                    <li><a class="dropdown-item" href="#" data-value="{{ tipo.tipo_cabeza }}">{{ tipo.tipo_cabeza }}</a></li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                        <input type="hidden" id="comSelected" name="com" value="">
+                                    </div>
+                                </div>
+                               
+                                <div class="col-md-3">
+                                    <select class="form-select" id="medidaTornillo" name="medidaTornillo" required disabled>
+                                        <option selected disabled value="">Medida de Tornillo</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select" id="longitudPieza" name="longitudPieza" required disabled>
+                                        <option selected disabled value="">Longitud de Pieza</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select" id="Rodamiento" name="Rodamiento" required disabled>
+                                        <option selected disabled value="">Rodamiento</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-center mt-4">
+                                <div class="col-md-3">
+                                    <label for="ps" class="form-label fw-bold">Precio</label>
+                                    <input type="text" class="form-control" id="ps" name="ps" placeholder="$" disabled 
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '');">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="col-12 mt-4 pt-4 text-center">
+                        <button class="btn btn-dark px-5 py-2" type="submit">Agregar</button>
+                        {% if proyecto %}
+                            <a class="btn btn-dark px-5 py-2 ms-5" href="{{ url_for('r_cotizacion', id=proyecto.idproyecto) }}">Terminar</a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-5">
+        <div class="table-responsive overflow-x mb-4">
+            <table class="table overflow-y-auto">
+                <thead class="fondo">
+                    <th scope="col">Tipo de perfil</th>
+                    <th scope="col">Material</th>
+                    <th scope="col">Diametro</th>
+                    <th scope="col">Longitud</th>
+                    <th scope="col">Ancho</th>
+                    <th scope="col">Alto</th>
+                    <th scope="col">Espesor</th>
+                    <th scope="col">V_Final</th>
+                    <th scope="col">N_Cortes</th>
+                    <th scope="col">Vmm^3</th>
+                    <th scope="col">Kg</th>
+                    <th scope="col">Acciones</th>
+                </thead>
+                <tbody>
+                    {% for row in cotizaciones %}
+                    <tr data-id="{{ row.idcotizacion }}">
+                        <th scope="row" data-field="tipo_perfil">{{ row.tipo_perfil }}</th>
+                        <td data-field="Material">{{ row.Material }}</td>
+                        <td contenteditable="{{ 'true' if row.diametro is not none else 'false' }}" data-field="diametro">{{ '{:.2f}'.format(row.diametro) if row.diametro is not none else '' }}</td>
+                        <td contenteditable="{{ 'true' if row.longitud is not none else 'false' }}" data-field="longitud">{{ '{:.2f}'.format(row.longitud) if row.longitud is not none else '' }}</td>
+                        <td contenteditable="{{ 'true' if row.ancho is not none else 'false' }}" data-field="ancho">{{ '{:.2f}'.format(row.ancho) if row.ancho is not none else '' }}</td>
+                        <td contenteditable="{{ 'true' if row.alto is not none else 'false' }}" data-field="alto">{{ '{:.2f}'.format(row.alto) if row.alto is not none else '' }}</td>
+                        <td contenteditable="{{ 'true' if row.espesor is not none else 'false' }}" data-field="espesor">{{ '{:.2f}'.format(row.espesor) if row.espesor is not none else '' }}</td>
+                        <td contenteditable="{{ 'true' if row.v_final is not none else 'false' }}" data-field="v_final">{{ '{:.2f}'.format(row.v_final) if row.v_final is not none else '' }}</td>
+                        <td contenteditable="{{ 'true' if row.n_cortes is not none else 'false' }}" data-field="n_cortes">{{ '{:.0f}'.format(row.n_cortes) if row.n_cortes is not none else '' }}</td>
+                        <td contenteditable="{{ 'true' if row.vmm3 is not none else 'false' }}" data-field="vmm3">{{ '{:.2f}'.format(row.vmm3) if row.vmm3 is not none else '' }}</td>
+                        <td contenteditable="{{ 'true' if row.kg is not none else 'false' }}" data-field="kg">{{ '{:.2f}'.format(row.kg) if row.kg is not none else '' }}</td>
+                        <td style="text-align: center;">
+                            <div class="d-flex">
+                                <button class="btn btn-warning px-3 py-1 update-btn me-1"><i class="bi bi-pencil-fill"></i></button>
+                                <a href="{{url_for('eliminar_c', id=row.idcotizacion)}}" class="btn btn-danger px-3 py-1"><i class="bi bi-trash3-fill"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Restringir entrada en tiempo real y mantener el cursor al final
+    document.querySelectorAll("[contenteditable=true]").forEach(cell => {
+        cell.addEventListener("input", function(e) {
+            let value = e.target.innerText.trim();
+            let lastValidValue = e.target.dataset.lastValidValue || '';
+            
+            if (value !== '' && !/^\d*\.?\d*$/.test(value)) {
+                e.preventDefault();
+                e.target.innerText = lastValidValue;
+                
+                let range = document.createRange();
+                let sel = window.getSelection();
+                range.setStart(e.target.childNodes[0] || e.target, lastValidValue.length);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            } else {
+                e.target.dataset.lastValidValue = value;
+            }
+        });
+        cell.dataset.lastValidValue = cell.innerText.trim();
+    });
+
+    // Manejo del botón de actualización
+    document.querySelectorAll(".update-btn").forEach(button => {
+        button.addEventListener("click", function(e) {
+            e.preventDefault();
+            let row = this.closest("tr");
+            let id = row.getAttribute("data-id");
+            
+            if (!id) {
+                console.error("ID no válido:", id);
+                alert("No se encontró un ID válido para actualizar");
+                return;
+            }
+            
+            let data = {};
+            row.querySelectorAll("[contenteditable=true]").forEach(cell => {
+                let fieldName = cell.getAttribute("data-field");
+                data[fieldName] = cell.innerText.trim();
+            });
+            
+            fetch(`/actualizar_c/${id}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`Error ${response.status}: ${text}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Actualizado:", data);
+                alert("Registro actualizado correctamente");
+            })
+            .catch(error => {
+                console.error("Error al actualizar:", error);
+                alert(`Error al actualizar el registro: ${error.message}`);
+            });
+        });
+    });
+
+    // Manejo del dropdown COM y control del campo precio
+    const dropdownItems = document.querySelectorAll('#dropdownCOM + .dropdown-menu .dropdown-item');
+    const dropdownButton = document.getElementById('dropdownCOM');
+    const comInput = document.getElementById('comSelected');
+    const precioInput = document.getElementById('ps');
+
+    dropdownItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const selectedValue = this.getAttribute('data-value');
+            dropdownButton.textContent = selectedValue;
+            comInput.value = selectedValue;
+            
+            // Habilitar el campo de precio si se selecciona una opción
+            if (selectedValue && selectedValue !== "Seleccione la COM") {
+                precioInput.disabled = false;
+            } else {
+                precioInput.disabled = true;
+                precioInput.value = ''; // Opcional: limpiar el valor cuando se deshabilita
+            }
+        });
+    });
+});
+
+document.getElementById('tipoPerfil').addEventListener('change', function() {
+    let selectedOption = this.options[this.selectedIndex];  
+    let tipoPerfil = selectedOption.getAttribute('data-tipo')?.trim();  
+    console.log("Tipo de perfil seleccionado:", tipoPerfil);  
+    
+    let materialSelect = document.getElementById('material');
+    let productoId = this.value;  
+
+    // Cargar materiales
+    materialSelect.innerHTML = '<option selected disabled value="">Cargando...</option>';
+    materialSelect.disabled = true;
+
+    fetch(`/obtener-materiales/${productoId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            materialSelect.innerHTML = '<option selected disabled value="">Seleccione una opción</option>';
+            data.forEach(material => {
+                let option = new Option(material.nombre, material.idmaterial);
+                materialSelect.appendChild(option);
+            });
+            materialSelect.disabled = false;  
+        })
+        .catch(error => console.error('Error al cargar materiales:', error));
+
+    // Manejo de campos
+    let horaInput = document.getElementById('campoMRO');
+    horaInput.disabled = true;
+
+    // Checkbox MRO
+    document.getElementById('flexCheckMRO').addEventListener('change', function() {
+        if (this.checked) {
+            horaInput.disabled = false;
+        } else {
+            horaInput.disabled = true;
+            horaInput.value = '';
+        }
+    });
+
+    // Obtener campos activos
+    fetch(`/obtener-campos/${productoId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Campos activos:", data.campos);
+            data.campos.forEach(id => {
+                let input = document.getElementById(id);
+                if (input) {
+                    input.disabled = false;
+                }
+            });
+        })
+        .catch(error => console.error('Error al cargar campos:', error));
+});
+</script>
+{% endblock %}

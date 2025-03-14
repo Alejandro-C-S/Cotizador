@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Alta proyecto{% endblock %}
+{% block content %}
+<div class="container-fluid text-center">
+    <h1 class="txt fw-bold mt-5">Alta del proyecto</h1>
+    <div class="container d-flex justify-content-center my-5">
+    <div class="card w-50 shadow-lg ">
+    {% if error %}
+        <div class="alert alert-danger" role="alert" id="error-message">
+            {{ error }}
+        </div>
+       
+    {% endif %}
+    <form class="card-body p-5" method="post">
+        <div class="mb-3 mx-3">
+          <label for="nombre" class="form-label txt fw-bold mt-3">Nombre</label>
+          <input type="text" class="form-control" id="nombre" name="nombre">
+        </div>
+        <div class="mb-3 mx-3">
+          <label for="consecutivo" class="form-label txt fw-bold mt-3">Consecutivo</label>
+          <input type="text" class="form-control" id="consecutivo" name="consecutivo" oninput="this.value = this.value.replace(/[^0-9-]/g, '');">
+        </div>
+        <button type="submit" class="btn btn-dark mt-3 px-5 py-2">Registrar</button>
+      </form>
+    </div>
+    </div>
+</div>
+<script>
+    window.onload = function() {
+        var errorMessage = document.getElementById('error-message');
+        if (errorMessage) {
+            setTimeout(function() {
+                errorMessage.style.display = 'none';
+            }, 2000); 
+        }
+    };
+</script>
+{% endblock %}
